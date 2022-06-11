@@ -1,14 +1,11 @@
 package main
 
 import (
-	"errors"
+	// "errors"
 )
 
-func getPassword() string, error {
-	return "secret", nil
-}
+var signKey string = "sign secret"
 
-func setPassword() error {
-	// if password already exist, than thorw err
-	return nil
+func getPassword() string {
+	return "secret"
 }

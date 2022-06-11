@@ -2,14 +2,14 @@ package main
 
 import (
 	"net/http"
-
-	// "github.com/golang-jwt/jwt/v4"
 )
 
 func main() {
-	http.HandleFunc("/", indexHandler)
+	http.Handle("/", permissionCheckMiddleware(indexHandler))
+	http.HandleFunc("/askPassword", askPasswordHandler)
+	http.HandleFunc("/login", loginHandler)
 
-	http.Handle("/login", permissionCheckMiddleware(loginHandler))
+	
 
 	http.ListenAndServe(":8081", nil)
 }
