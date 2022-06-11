@@ -1,10 +1,10 @@
 package main
 
 import (
-	"log"
 	_ "embed"
 	"html/template"
 	"net/http"
+	"time"
 
 	"github.com/golang-jwt/jwt/v4"
 )
@@ -21,7 +21,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 
 	// publish jwt
 	claims := &jwt.StandardClaims {
-		ExpiresAt: 15000,
+		ExpiresAt: time.Now().Add(time.Hour * 24 * 14).Unix(),
 		Issuer: "me",
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -48,13 +48,12 @@ func permissionCheckMiddleware(next http.HandlerFunc) http.Handler {
 			http.Redirect(w, r, "/askPassword", http.StatusTemporaryRedirect)
 		}
 
-		token, err := jwt.Parse(cookie.Value, func(token *jwt.Token) (interface{}, error) {
+		_, err = jwt.Parse(cookie.Value, func(token *jwt.Token) (interface{}, error) {
 			return []byte(signKey), nil
 		})
 		if err != nil {
 			http.Redirect(w, r, "/askPassword", http.StatusTemporaryRedirect)
 		}
-		log.Println(token)
 
 		next.ServeHTTP(w, r)
 	})
